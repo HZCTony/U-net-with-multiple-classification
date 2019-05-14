@@ -34,7 +34,7 @@ The original size of images is 512x512. However, they'll be resized to 256x256 f
 
 * in def adjustdata(), reshape the mask with (batch_size, width, height, classes). Every channel in fourth dimemsion corresponds to a certain class with one-hot format. The code here only written for 3 classes(cat, dog, background).
 
-* in labelVsiualize(), pick up the max value in one-hot vector and draw the corresponding colors to the classes. You can define the color in clolor_dict.
+* in labelVsiualize(), pick up the max value in one-hot vector and draw the corresponding colors to every gnenerated all-zero array. You can define the color in clolor_dict.
 
 
 ### model2.py
