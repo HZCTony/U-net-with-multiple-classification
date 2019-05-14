@@ -51,6 +51,12 @@ The original size of images is 512x512. However, they'll be resized to 256x256 f
 The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size. You can test more hyperparameters and let me know something amazing from you.
 
 
+### Run main.py
+
+```
+python3 main.py
+```
+
 
 ### My dependencies
 
@@ -66,11 +72,6 @@ The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size. Yo
 
 
 
-### Run main.py
-
-```
-python3 main.py
-```
 
 
 
