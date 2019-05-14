@@ -9,6 +9,7 @@ The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segme
 
 ![image](img/pic_modified.png)
 loss = 0.2976
+
 accuracy = 0.8786
 
 Actually, the result is not good enough. To improve that, it may need more src data, larger batch size, etc. 
