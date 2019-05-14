@@ -17,8 +17,8 @@ Actually, the result is not good enough. To improve that, it may need more src d
 # You have to know what I modification: 
 ### Data.py
 
-The input data should be 512*512 images for U-net in model.py. I have the sample images of cats and dogs from internet.  
-Besides, I don't use dataPrepare.ipynb so just ingnore it.
+The input data should be 512*512 images for U-net in model2.py. I have the sample images of cats and dogs from internet.  
+Besides, I don't use dataPrepare.ipynb so just ingnore it. 
 
 
 ### model2.py
