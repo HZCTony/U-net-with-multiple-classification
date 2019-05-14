@@ -5,7 +5,9 @@ This is a modified project from the 2-class [zhixuhao/unet](https://github.com/z
 The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segmentation](http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/).
 
 
-### My result
+# My result
+
+
 
 # You have to know : 
 ### Data.py
