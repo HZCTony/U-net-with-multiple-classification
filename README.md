@@ -22,7 +22,7 @@ Besides, I don't use dataPrepare.ipynb so just ingnore it.
 
 ### model2.py
 
-I slightly retified the strucure of U-net and saved it as model2.py . What I've done is:
+I slightly rectified the strucure of U-net and saved it as model2.py . What I've done is:
 
 * set activation = None in every conv2D and add LeakyReLU after every conv2D. 
 * conv10 is the last layer for classification. set activation = "softmax" in conv10
