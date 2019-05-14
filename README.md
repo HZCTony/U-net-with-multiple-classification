@@ -1,6 +1,6 @@
 # U-net with multiple classification using Keras
 
-This is a modified project from the 2-class [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. 
+This is a modified project from the 2-class [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a correct process of colorful classification. Ha ha :)
 
 The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segmentation](http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/).
 
@@ -8,15 +8,26 @@ The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segme
 # My result
 
 ![image](img/pic_modified.png)
+loss = 0.2976
+accuracy = 0.8786
 
-# You have to know : 
+Actually, the result is not good enough. To improve that, it may need more src data, larger batch size, etc. 
+
+# You have to know what I modification: 
 ### Data.py
 
 The input data should be 512*512 images for U-net in model.py. I have the sample images of cats and dogs from internet.  
 Besides, I don't use dataPrepare.ipynb so just ingnore it.
 
 
-### Model
+### model2.py
+
+I slightly retified the strucure of U-net and saved it as model2.py . What I've done is:
+
+* set activation = None in every conv2D and add LeakyReLU after every conv2D. 
+* conv10 is the last layer for classification. set activation = "softmax" in conv10
+* Adam optimizer with learing rate = 1e-5 (just try it)
+* set 'categorical_crossentropy' as loss function 
 
 
 
@@ -40,12 +51,15 @@ My dependency:
 
 
 (it's optional, but I recommend that):
-docker 18.09.5
+
+* docker 18.09.5
 
 
 ### Run main.py
 
-
+```
+python3 main.py
+```
 
 ## About Keras
 
