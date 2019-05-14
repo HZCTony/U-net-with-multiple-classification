@@ -19,9 +19,9 @@ Actually, the result is not good enough. To improve that, it may need more src d
 The structure of this project is:
 
 /data/catndog : my sample collection of cat and dog with the [required catalog](https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d). 
-data.py : prepare the related images you want to train and predict.
-model2.py : define the U-net structure
-main.py : run the program
+* data.py : prepare the related images you want to train and predict.
+* model2.py : define the U-net structure
+* main.py : run the program
 
 
 ### data.py
