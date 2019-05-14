@@ -7,7 +7,7 @@ The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segme
 
 # My result
 
-
+![image]("img/pic_modified.png")
 
 # You have to know : 
 ### Data.py
