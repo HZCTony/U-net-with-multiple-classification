@@ -16,41 +16,45 @@ accuracy = 0.8786
 
 Actually, the result is not good enough. To improve that, it may need more src data, larger batch size, etc. 
 
-# What I've modified: 
+
+### You have to know:
+The structure of this project is:
+
+/data/catndog : my sample collection of cat and dog with the [required catalog](https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d). 
+data.py : prepare the related images you want to train and predict.
+model2.py : define the U-net structure
+main.py : run the program
+
+
 ### data.py
 
-The input data should be 512x512 images for U-net in model2.py. I collect the sample images of cats and dogs from internet. You can find them in /data/catndog/ . Besides, I don't use dataPrepare.ipynb so just ingnore it. My modifications are summerized below:
+The original size of images is 512x512. However, they'll be resized to 256x256 for U-net in model2.py. I collect the sample images of cats and dogs from internet. You can find them in /data/catndog/ . Besides, I don't use dataPrepare.ipynb so just ingnore it. My modifications are summerized below:
 
-* in def trainGenerator(), replace the parameter "classes" with train_path+"image" and train_path+"label" in flow_from_directory(). keras will detect the classes from your training data automatically.
-
+* in def trainGenerator(), at first, comment "classes". Second, set the target directories as train_path+"image" in image_datagen.flow_from_directory() and train_path+"label" in mask_datagen.flow_from_directory(). Keras will detect the classes from your training data automatically.
 
 * Let all the "flag_multi_class = True"
 
+* in def adjustdata(), reshape the mask with (batch_size, width, height, classes). Every channel in fourth dimemsion corresponds to a certain class with one-hot format. The code here only written for 3 classes(cat, dog, background).
+
+* in labelVsiualize(), pick up the max value in one-hot vector and draw the corresponding colors to the classes. You can define the color in clolor_dict.
 
 
 ### model2.py
 
-I slightly rectified the U-net structure and saved it as model2.py . What I've done is:
-
-* set activation = None in every conv2D and add LeakyReLU after every conv2D. 
+* Set activation = None in every conv2D and add LeakyReLU after every conv2D. It helps prevent the training process from not updating weights. 
 * Set activation = "softmax" in last layer, conv10, for classification. 
 * Adam optimizer with learing rate = 1e-5 (I just try it)
-* set 'categorical_crossentropy' as loss function 
+* Set 'categorical_crossentropy' as loss function rather than 'binary_crossentropy'
 
 
 
 ### Training
 
-The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size.
+The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size. You can test more hyperparameters and let me know something amazing from you.
 
 
 
-
-## How to use
-
-### Dependencies
-
-My dependency:
+### My dependencies
 
 * Tensorflow : 1.4.0
 * Keras >= 1.0
@@ -63,15 +67,12 @@ My dependency:
 * docker 18.09.5
 
 
+
 ### Run main.py
 
 ```
 python3 main.py
 ```
 
-## About Keras
 
 
-Read the documentation [Keras.io](http://keras.io/)
-
-Keras is compatible with: Python 2.7-3.5.
