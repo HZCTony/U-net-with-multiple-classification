@@ -36,7 +36,7 @@ I slightly retified the strucure of U-net and saved it as model2.py . What I've 
 The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size.
 
 
----
+
 
 ## How to use
 
