@@ -1,4 +1,4 @@
-# Unet with multiple classification using Keras
+# Unet : multiple classification using Keras
 
 This is a modified project from the 2-class [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a correct process of colorful classification. Ha ha :)
 
