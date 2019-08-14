@@ -5,28 +5,45 @@ This is a modified project from the 2-class [zhixuhao/unet](https://github.com/z
 The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segmentation](http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/).
 
 
-# My result
+--------------------------------------------------------------------------------
+### 2019/08/14 update 
 
-![image](img/pic_modified.png)
-loss = 0.2976
+I simplified my code and now make training much easier.
+You can just pass the parameters when you want to do training.
 
-accuracy = 0.8786
+For example, I did my own training with the command line as following:
+```
+python3 main.py -n 001 -lr 0.00004 -ldr 0.000008 -b 16 -s 60 -e 80
+```
 
-Actually, the result is not good enough. To improve that, it may need more src data, larger batch size, etc. 
+-n = Just a number.
+-lr = learning rate
+-ldr = learning decay rate
+-b = batch size
+-s = steps
+-e = epochs
+
+If you want to know more params, check the commands in mode/config.py
+
+--------------------------------------------------------------------------------
 
 
 ### You have to know:
 The structure of this project is:
 
 /data/catndog : my sample collection of cat and dog with the [required catalog](https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d). 
+
+All you have see are defined as below:
 * data.py : prepare the related images you want to train and predict.
-* model2.py : define the U-net structure
+* model.py : define the U-net structure
 * main.py : run the program
 
 
 ### data.py
 
-The original size of images is 512x512. However, they'll be resized to 256x256 for U-net in model2.py. I collect the sample images of cats and dogs from internet. You can find them in /data/catndog/ . Besides, I don't use dataPrepare.ipynb so just ingnore it. My modifications are summerized below:
+My original size of images is 512x512. However, they'll be resized to 256x256 for U-net architecture defined in model.py. I collect the sample images of cats and dogs from internet. You can find my sample data in /data/catndog/. However, /catndog/ just show how to put your data. You have to prepare your data by your own.
+
+My modifications are summerized below:
 
 * in def trainGenerator(), at first, comment "classes". Second, set the target directories as train_path+"image" in image_datagen.flow_from_directory() and train_path+"label" in mask_datagen.flow_from_directory(). Keras will detect the classes from your training data automatically.
 
@@ -37,25 +54,14 @@ The original size of images is 512x512. However, they'll be resized to 256x256 f
 * in labelVsiualize(), pick up the max value in one-hot vector and draw the corresponding colors to every gnenerated all-zero array. You can define the color in clolor_dict.
 
 
-### model2.py
+### model.py
 
-* Set activation = None in every conv2D and add LeakyReLU after every conv2D. It helps prevent the training process from not updating weights. 
-* Set activation = "softmax" in last layer, conv10, for classification. 
-* Adam optimizer with learing rate = 1e-5 (I just try it)
-* Set 'categorical_crossentropy' as loss function rather than 'binary_crossentropy'
+All the U-net architecture is defined in model.py .
 
 
+### main.py
 
-### Training
-
-The model is trained for 20 epochs, 100 steps per epoch and 6 per batch size. You can test more hyperparameters and let me know something amazing from you.
-
-
-### Run main.py
-
-```
-python3 main.py
-```
+Training and test steps are defined in main.py .
 
 
 ### My dependencies
@@ -72,6 +78,10 @@ python3 main.py
 
 
 
+
+
+
+If there is any other suggestion, do not hesitate to tell me.
 
 
 
