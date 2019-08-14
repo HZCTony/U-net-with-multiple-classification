@@ -1,22 +1,113 @@
+import os
+import os.path
 from model import *
 from data import *
+from keras.models import load_model
+from keras.callbacks import History
+import tensorflow as tf
+import matplotlib.pyplot as plt 
+from keras import backend as K
+from mode.config import *
+from csvrecord import * 
+from pathlib import Path
+from keras.callbacks import ModelCheckpoint, LearningRateScheduler, ReduceLROnPlateau
 
-#os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+arg = command_arguments()
+
+batch_size = arg.batchsize
+train_path = arg.train_path
+train_img_folder = arg.train_img_folder
+train_label_folder = arg.train_label_folder
+test_img_path = arg.test_img_path
+steps_per_epoch = arg.steps_per_epoch
+epochs = arg.epochs
+save_result_folder = arg.save_result_folder
+csvfilename = arg.csvfilename
+model_name = arg.model_name
+plt_save_name = arg.plt_save_name
+val_plt_name = arg.val_plt_name
+img_num = arg.img_num
+filenum = arg.filenum
+
+#augs 
+
+rotation_range = arg.rotation_range
+width_shift_range = arg.width_shift_range
+height_shift_range = arg.height_shift_range
+zoom_range = arg.zoom_range
+horizontal_flip = arg.horizontal_flip
+fill_mode = arg.fill_mode
+
+data_gen_args = dict(
+                    featurewise_center=True,
+                    featurewise_std_normalization=True,
+                    rotation_range=rotation_range,
+                    width_shift_range=width_shift_range,
+                    height_shift_range=height_shift_range,
+                    #shear_range=0.05,
+                    #zoom_range=zoom_range,
+                    horizontal_flip=horizontal_flip,
+                    fill_mode=fill_mode,
+                    cval=0)
 
 
-data_gen_args = dict(rotation_range=0.2,
-                    width_shift_range=0.05,
-                    height_shift_range=0.05,
-                    shear_range=0.05,
-                    zoom_range=0.05,
-                    horizontal_flip=True,
-                    fill_mode='nearest')
-myGene = trainGenerator(2,'data/membrane/train','image','label',data_gen_args,save_to_dir = None)
 
+def show_train_history(train_history, train, loss, plt_save_name=plt_save_name):
+    plt.plot(train_history.history['acc'])
+    plt.plot(train_history.history['val_acc'])
+    plt.title('Acc hist')
+    plt.ylabel(train)
+    plt.xlabel('Epoch')
+    plt.legend(['acc','val_acc'], loc='upper left')
+    plt.savefig(plt_save_name)
+
+def show_val_history(train_history, val, val_loss, plt_save_name=val_plt_name):
+    plt.clf()
+    plt.plot(train_history.history['loss'])
+    plt.plot(train_history.history['val_loss'])
+    plt.title('Val hist')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['loss','val_loss'], loc='upper left')
+    plt.savefig(plt_save_name)
+
+
+lr_func = ReduceLROnPlateau(monitor='val_loss',
+                            patience=4,
+                            verbose=1,
+                            factor=0.75,
+                            min_lr=0.000005
+
+)
+
+myGene = trainGenerator(batch_size, train_path, train_img_folder, train_label_folder, data_gen_args, save_to_dir = './aug')
+valGene = validationGenerator(batch_size, "/Unet/data_f1/little_val/", "image", "label", data_gen_args, save_to_dir=None)
+
+
+#model = MultiResUnet()
 model = unet()
-model_checkpoint = ModelCheckpoint('unet_membrane.hdf5', monitor='loss',verbose=1, save_best_only=True)
-model.fit_generator(myGene,steps_per_epoch=300,epochs=1,callbacks=[model_checkpoint])
+model_checkpoint = ModelCheckpoint(model_name, monitor='val_loss',verbose=1, save_best_only=True)
+training = model.fit_generator(myGene, steps_per_epoch=steps_per_epoch, epochs=epochs, validation_data=valGene, validation_steps=10, callbacks=[model_checkpoint, lr_func])
+show_train_history(training, 'acc', 'loss')
+show_val_history(training, val='val_acc', val_loss='val_loss')
+model = load_model(model_name)
 
-testGene = testGenerator("data/membrane/test")
-results = model.predict_generator(testGene,30,verbose=1)
-saveResult("data/membrane/test",results)
+testGene = testGenerator(test_img_path)
+#testGene_for_eval = testGenerator_for_evaluation(test_img_path)
+results = model.predict_generator(testGene, img_num, verbose=1)
+#loss, acc = model.evaluate_generator(testGene_for_eval, steps=img_num, verbose=1)
+#print("test loss:",loss,"  test accuracy:", acc)
+if not os.path.exists(save_result_folder):
+    os.makedirs(save_result_folder)
+
+saveResult( save_result_folder, results)
+
+
+if (os.path.isfile(csvfilename)!=True):
+    csv_create(csvfilename, filenum, batch_size, steps_per_epoch, epochs, learning_rate, learning_decay_rate, rotation_range)
+else:
+    csv_append(csvfilename, filenum, batch_size, steps_per_epoch, epochs, learning_rate, learning_decay_rate, rotation_range)
+
+
+
+K.clear_session()
