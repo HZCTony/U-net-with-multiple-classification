@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import os
 import os.path
 from model import *
-=======
-from model2 import *
->>>>>>> b9d9b86016be6d998071ccdfe8bf5924e7894700
 from data import *
 from keras.models import load_model
 from keras.callbacks import History
@@ -33,18 +29,7 @@ val_plt_name = arg.val_plt_name
 img_num = arg.img_num
 filenum = arg.filenum
 
-<<<<<<< HEAD
 #augs 
-=======
-data_gen_args = dict(#rotation_range=0.2,
-                    width_shift_range=0.05,
-                    height_shift_range=0.05,
-                    #shear_range=0.05,
-                    zoom_range=0.05,
-                    horizontal_flip=True,
-                    fill_mode='nearest')
-myGene = trainGenerator(6,'/unet/data/catndog/train/','image','label',data_gen_args,save_to_dir = 'data/catndog/train/aug/')
->>>>>>> b9d9b86016be6d998071ccdfe8bf5924e7894700
 
 rotation_range = arg.rotation_range
 width_shift_range = arg.width_shift_range
@@ -101,7 +86,6 @@ valGene = validationGenerator(batch_size, "/Unet/data_f1/little_val/", "image", 
 
 #model = MultiResUnet()
 model = unet()
-<<<<<<< HEAD
 model_checkpoint = ModelCheckpoint(model_name, monitor='val_loss',verbose=1, save_best_only=True)
 training = model.fit_generator(myGene, steps_per_epoch=steps_per_epoch, epochs=epochs, validation_data=valGene, validation_steps=10, callbacks=[model_checkpoint, lr_func])
 show_train_history(training, 'acc', 'loss')
@@ -127,11 +111,3 @@ else:
 
 
 K.clear_session()
-=======
-model_checkpoint = ModelCheckpoint('catndog.hdf5', monitor='loss',verbose=1, save_best_only=True)
-model.fit_generator(myGene,steps_per_epoch=100,epochs=20,callbacks=[model_checkpoint])
-
-testGene = testGenerator("data/catndog/test")
-results = model.predict_generator(testGene,28,verbose=1)
-saveResult("data/catndog/predict/",results)
->>>>>>> b9d9b86016be6d998071ccdfe8bf5924e7894700
