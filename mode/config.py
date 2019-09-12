@@ -13,13 +13,13 @@ def command_arguments():
     parser.add_argument('--batchsize','-b', default=5, type=int, help='batch size')
     parser.add_argument('--steps_per_epoch','-s', default=70,type=int, help='steps_per_epoch')
     parser.add_argument('--epochs','-e', default=70, type=int, help='epochs')
-    parser.add_argument('--train_path','-tp', default='./data/formal_train/', help='train_path')
+    parser.add_argument('--train_path','-tp', default='./data/catndog/train/', help='train_path')
     parser.add_argument('--train_img_folder','-tif', default='image', help='train_img_folder')
     parser.add_argument('--train_label_folder','-tlf', default='label', help='train_label_folder')
-    parser.add_argument('--test_img_path','-tip',default="./31/", help='test_img_path')    
-    parser.add_argument('--img_num','-tm', default=31, type=int, help='test img num')
+    parser.add_argument('--test_img_path','-tip',default="./data/catndog/test/", help='test_img_path')    
+    parser.add_argument('--img_num','-tm', default=27, type=int, help='test img num')
     
-    save_result_folder = "./results/%s_mrsu/" % parser.parse_args().filenum
+    save_result_folder = "./data/catndog/results/%s_mrsu/" % parser.parse_args().filenum
     model_name = '%s_mrsu_lichi.hdf5' % parser.parse_args().filenum
     plt_save_name = '%s_fig_mrsu.png' % parser.parse_args().filenum
     val_plt_name = '%s_val.png' % parser.parse_args().filenum

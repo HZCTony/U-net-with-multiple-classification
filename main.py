@@ -54,42 +54,19 @@ data_gen_args = dict(
 
 def show_train_history(train_history, train, loss, plt_save_name=plt_save_name):
     plt.plot(train_history.history['acc'])
-    plt.plot(train_history.history['val_acc'])
-    plt.title('Acc hist')
+    plt.plot(train_history.history['loss'])
+    plt.title('Train hist')
     plt.ylabel(train)
     plt.xlabel('Epoch')
-    plt.legend(['acc','val_acc'], loc='upper left')
+    plt.legend(['acc','loss'], loc='upper left')
     plt.savefig(plt_save_name)
 
-def show_val_history(train_history, val, val_loss, plt_save_name=val_plt_name):
-    plt.clf()
-    plt.plot(train_history.history['loss'])
-    plt.plot(train_history.history['val_loss'])
-    plt.title('Val hist')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['loss','val_loss'], loc='upper left')
-    plt.savefig(plt_save_name)
+myGene = trainGenerator(batch_size, train_path, train_img_folder, train_label_folder, data_gen_args, save_to_dir = None)
 
-
-lr_func = ReduceLROnPlateau(monitor='val_loss',
-                            patience=4,
-                            verbose=1,
-                            factor=0.75,
-                            min_lr=0.000005
-
-)
-
-myGene = trainGenerator(batch_size, train_path, train_img_folder, train_label_folder, data_gen_args, save_to_dir = './aug')
-valGene = validationGenerator(batch_size, "/Unet/data_f1/little_val/", "image", "label", data_gen_args, save_to_dir=None)
-
-
-#model = MultiResUnet()
 model = unet()
-model_checkpoint = ModelCheckpoint(model_name, monitor='val_loss',verbose=1, save_best_only=True)
-training = model.fit_generator(myGene, steps_per_epoch=steps_per_epoch, epochs=epochs, validation_data=valGene, validation_steps=10, callbacks=[model_checkpoint, lr_func])
+model_checkpoint = ModelCheckpoint(model_name, monitor='loss',verbose=1, save_best_only=True)
+training = model.fit_generator(myGene, steps_per_epoch=steps_per_epoch, epochs=epochs, validation_steps=10, callbacks=[model_checkpoint])
 show_train_history(training, 'acc', 'loss')
-show_val_history(training, val='val_acc', val_loss='val_loss')
 model = load_model(model_name)
 
 testGene = testGenerator(test_img_path)
@@ -97,6 +74,7 @@ testGene = testGenerator(test_img_path)
 results = model.predict_generator(testGene, img_num, verbose=1)
 #loss, acc = model.evaluate_generator(testGene_for_eval, steps=img_num, verbose=1)
 #print("test loss:",loss,"  test accuracy:", acc)
+
 if not os.path.exists(save_result_folder):
     os.makedirs(save_result_folder)
 

@@ -132,7 +132,7 @@ def unet(pretrained_weights = None,input_size = img_size):
     conv9 = LeakyReLU(alpha=leakyrelu_alpha)(conv9)    
     #conv9 = Dropout(dr_rate)(conv9) ###
     
-    conv10 = Conv2D(4, 1, activation = 'softmax')(conv9)
+    conv10 = Conv2D(3, 1, activation = 'softmax')(conv9)
 
     model = Model(inputs = inputs, outputs = conv10)
     

@@ -10,22 +10,18 @@ from mode.config import *
 np.set_printoptions(threshold=sys.maxsize, precision=5, suppress=True)
 
 arg = command_arguments()
-#########################configuration#########################
-adult = [120,0,0]
-egg = [0,255,0]
-kidtwo = [0,0,200]
+#########################configuration########################
+cat = [120,0,0]
+dog = [0,255,0]
 Unlabelled = [0,0,0]
 
-COLOR_DICT = np.array([ adult, egg, kidtwo, Unlabelled])
-class_name = [ 'className1', 'className2', 'className3', 'None']  # You must define by yourself
+COLOR_DICT = np.array([ cat, dog, Unlabelled])
+class_name = [ 'cat', 'dog', 'None']  # You must define by yourself
 
 color = 'grayscale'
 
-num_classes = 4
+num_classes = 3 # include None of any class
 num_of_test_img = arg.img_num
-
-probability_threshold = 0.1
-portion_threshold = 0.03
 
 test_img_size = 256 * 256
 
@@ -40,14 +36,18 @@ def adjustData(img,mask,flag_multi_class,num_class):
         img = img / 255.
         #print(mask.shape)
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
-        mask[(mask!=0.)&(mask!=255.)&(mask!=120.)&(mask!=140.)] = 0.
+        mask[(mask!=0.)&(mask!=255.)&(mask!=128.)] = 0.
         #print(mask.shape)
         new_mask = np.zeros(mask.shape + (num_class,))
-        new_mask[mask == 120.  , 0] = 1
-        new_mask[mask == 255.,   1] = 1
-        #new_mask[mask == 180.,   2] = 1
-        new_mask[mask == 140.,   2] = 1
-        new_mask[mask == 0.,     3] = 1
+        ########################################################################
+        #You should define the value of your labelled gray imgs
+        #For example,the imgs in /data/catndog/train/label/cat is labelled white
+        #you got to define new_mask[mask == 255, 0] = 1
+        #it equals to the one-hot array [1,0,0].
+        ########################################################################
+        new_mask[mask == 255.,   0] = 1
+        new_mask[mask == 128.,   1] = 1
+        new_mask[mask == 0.,   2] = 1
         mask = new_mask
 
     elif(np.max(img) > 1):
@@ -128,13 +128,6 @@ def validationGenerator( batch_size, val_path, image_folder, mask_folder, aug_di
         img ,mask = adjustData(img, mask, flag_multi_class, num_class)
         yield (img,mask)
 
-
-
-
-
-
-
-
 def testGenerator(test_path,num_image = num_of_test_img, target_size = img_size, flag_multi_class=True, as_gray=True):
     for i in range(num_image):
         i = i + 1
@@ -164,14 +157,12 @@ def testGenerator_for_evaluation(test_path, mask_path, num_image=num_of_test_img
         #print(mask)
         #print(mask.shape)
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
-          ###### filter noise points not related to the classes ######
-        mask[(mask!=0.)&(mask!=255.)&(mask!=120.)&(mask!=140.)] = 0.
+        ###### filter noise points not related to the classes ######
+        mask[(mask!=0.)&(mask!=255.)&(mask!=128.)] = 0.
         new_mask = np.zeros(mask.shape + (num_class,))
-        new_mask[(mask == 120.),   0] = 1
-        new_mask[(mask == 255.),   1] = 1
-        #new_mask[(mask == 180.),   2] = 1
-        new_mask[(mask == 140.),   2] = 1
-        new_mask[(mask == 0.),     3] = 1
+        new_mask[(mask == 255.),   0] = 1
+        new_mask[(mask == 128.),   1] = 1
+        new_mask[(mask ==   0.),   2] = 1
         mask = new_mask
                
         yield (img,mask)
@@ -182,47 +173,16 @@ def labelVisualize(num_class,  color_dict, img):
     for i in range(img.shape[0]):
         for j in range(img.shape[1]):
             index_of_class = np.argmax(img[i,j])
-            if img[i,j,index_of_class] < probability_threshold:
-               index_of_class = -1
             img_out[i,j] = color_dict[index_of_class]
     return img_out
-
-def recognition_text(num_class, img):
-    counting = np.zeros(num_class, dtype=int)
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            #temp = np.array([img[i,j,0], img[i,j,1], img[i,j,2]])
-            temp = np.array(img[i,j])
-            index_of_class = np.argmax(temp)
-            if temp[index_of_class] < probability_threshold:
-               index_of_class = -1
-            counting[index_of_class] += 1
-    
-    predicted_class = np.argmax([counting[0], counting[1], counting[2]])
-    portion = counting[predicted_class]/(test_img_size)
-    if portion < portion_threshold:
-       predicted_class = -1       
-
-    pred_dict = {
-                 'class': class_name[predicted_class],
-                 'img_size' : img_size,
-                 'portion': portion,
-                 'pixel count': counting,
-                 'probability threshold': probability_threshold,
-                 'portion threshold': portion_threshold
-                }
-    print(pred_dict)
-
-    return pred_dict
 
 def saveResult(save_path,npyfile,flag_multi_class = True,num_class = num_classes ):
     count = 1
     for i,item in enumerate(npyfile):
         if flag_multi_class:
-            pred_result = recognition_text(num_class, item)
             img = labelVisualize(num_class,COLOR_DICT,item)
             img = img.astype(np.uint8)
-            io.imsave(os.path.join(save_path,"%d_%s.png"%(count,pred_result['class'])),img)
+            io.imsave(os.path.join(save_path,"%d.png"%count),img)
         else:
             img=item[:,:,0]
             print(np.max(img),np.min(img))
@@ -230,6 +190,6 @@ def saveResult(save_path,npyfile,flag_multi_class = True,num_class = num_classes
             img[img<=0.5]=0
             print(np.max(img),np.min(img))
             img = img * 255.
-            io.imsave(os.path.join(save_path,"%d_%s.png"%(count,pred_result['class'])),img)
+            io.imsave(os.path.join(save_path,"%d.png"%count),img)
         count += 1
 
