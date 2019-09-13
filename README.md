@@ -3,7 +3,7 @@
 This is a modified project from the two-class(cell and background) [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a process of multiple classification. Here are 3 classes, dog, cat and background and I open the labelled images. Try it!
 
 --------------------------------------------------------------------------------
-### 2019/09/13 update 
+### 2019/09/13 update : Quick Start
 
 I simplified my code and now make training much easier.
 Once you want to run training, you can just pass some parameters in command line like below:
@@ -45,10 +45,9 @@ My modifications are summerized below:
 
 * Let all the "flag_multi_class = True"
 
-* in def adjustdata(), reshape the mask with (batch_size, width, height, classes). Every channel in fourth dimemsion corresponds to a certain class with one-hot format. The code here only written for 3 classes(cat, dog, background).
+* in def adjustdata(), reshape the mask with (batch_size, width, height, classes). Every channel in fourth dimemsion corresponds to a certain class with one-hot format. This repo only written for 3 classes(cat, dog, background).
 
 * in labelVsiualize(), pick up the max value in one-hot vector and draw the corresponding colors to every gnenerated all-zero array. You can define the color in clolor_dict.
-
 
 ### model.py
 
