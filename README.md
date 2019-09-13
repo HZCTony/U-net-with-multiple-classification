@@ -1,29 +1,25 @@
 # Unet : multiple classification using Keras
 
-This is a modified project from the 2-class [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a process of colorful classification.
-
-The orinigal thesis is [U-Net: Convolutional Networks for Biomedical Image Segmentation](http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/).
-
+This is a modified project from the two-class(cell and background) [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a process of multiple classification. Here are 3 classes, dog, cat and background and I open the labelled images. Try it!
 
 --------------------------------------------------------------------------------
-### 2019/08/14 update 
+### 2019/09/13 update 
 
 I simplified my code and now make training much easier.
-You can just pass the parameters when you want to do training.
-
-For example, I did my own training with the command line as following:
+Once you want to run training, you can just pass some parameters in command line like below:
 ```
 python3 main.py -n 001 -lr 0.00004 -ldr 0.000008 -b 16 -s 60 -e 80
 ```
 
--n = Just a number.
--lr = learning rate
+-n   = A number helps save different .h5 and directories of infered images.
+-lr  = learning rate
 -ldr = learning decay rate
--b = batch size
--s = steps
--e = epochs
+-b   = batch size
+-s   = steps
+-e   = epochs
+(check more params in mode/config.py)
 
-If you want to know more params, check the commands in mode/config.py
+After you build up your own dev environment, you can run with the command immediately.
 
 --------------------------------------------------------------------------------
 
@@ -41,7 +37,7 @@ All you have see are defined as below:
 
 ### data.py
 
-My original size of images is 512x512. However, they'll be resized to 256x256 for U-net architecture defined in model.py. I collect the sample images of cats and dogs from internet. You can find my sample data in /data/catndog/. However, /catndog/ just show how to put your data. You have to prepare your data by your own.
+My original size of images is 512x512. However, they'll be resized to 256x256 for U-net architecture defined in model.py. I collect the sample images of cats and dogs from internet. You can find my sample data in /data/catndog/. However, /catndog/ just show how to put your data. You can prepare your data by your own.
 
 My modifications are summerized below:
 
@@ -78,10 +74,11 @@ Training and test steps are defined in main.py .
 
 
 
-
-
-
 If there is any other suggestion, do not hesitate to tell me.
 
 
+
+
+
+The orinigal thesis：[U-Net: Convolutional Networks for Biomedical Image Segmentation](http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/). 
 
