@@ -11,12 +11,12 @@ Once you want to run training, you can just pass some parameters in command line
 python3 main.py -n 001 -lr 0.00004 -ldr 0.000008 -b 16 -s 60 -e 80
 ```
 
--n   = A number helps save different .h5 and directories of infered images.
--lr  = learning rate
--ldr = learning decay rate
--b   = batch size
--s   = steps
--e   = epochs
+-n   = A number helps save different .h5 and directories of infered images.  
+-lr  = learning rate  
+-ldr = learning decay rate  
+-b   = batch size  
+-s   = steps  
+-e   = epochs  
 (check more params in mode/config.py)
 
 After you build up your own dev environment, you can run with the command immediately.
