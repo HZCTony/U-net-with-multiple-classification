@@ -20,7 +20,7 @@ class_name = [ 'cat', 'dog', 'None']  # You must define by yourself
 
 color = 'grayscale'
 
-num_classes = 3 # include None of any class
+num_classes = 3 # include cat, dog and None.
 num_of_test_img = arg.img_num
 
 test_img_size = 256 * 256
@@ -32,12 +32,9 @@ img_size = (256,256)
 
 def adjustData(img,mask,flag_multi_class,num_class):
     if(flag_multi_class):
-        #print(type(img))
         img = img / 255.
-        #print(mask.shape)
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
         mask[(mask!=0.)&(mask!=255.)&(mask!=128.)] = 0.
-        #print(mask.shape)
         new_mask = np.zeros(mask.shape + (num_class,))
         ########################################################################
         #You should define the value of your labelled gray imgs
@@ -71,7 +68,6 @@ def trainGenerator( batch_size, train_path, image_folder, mask_folder, aug_dict,
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
         train_path+"image",
-        #classes = [image_folder],
         class_mode = None,
         color_mode = image_color_mode,
         target_size = target_size,
@@ -81,7 +77,6 @@ def trainGenerator( batch_size, train_path, image_folder, mask_folder, aug_dict,
         seed = seed)
     mask_generator = mask_datagen.flow_from_directory(
         train_path+"label",
-        #classes = [mask_folder],
         class_mode = None,
         color_mode = mask_color_mode,
         target_size = target_size,
@@ -95,8 +90,8 @@ def trainGenerator( batch_size, train_path, image_folder, mask_folder, aug_dict,
         img,mask = adjustData(img,mask,flag_multi_class,num_class)
         yield (img,mask)
 
-
-
+### You have to prepare validation data by your own while training
+### If you prepared, add validation_data= "your own val path" in fit_generator in main.py
 def validationGenerator( batch_size, val_path, image_folder, mask_folder, aug_dict, image_color_mode = "grayscale",
                          mask_color_mode = "grayscale", image_save_prefix  = "image", mask_save_prefix  = "mask",
                          flag_multi_class = True, num_class = num_classes , save_to_dir = None, target_size = img_size, seed = 1):
@@ -105,7 +100,6 @@ def validationGenerator( batch_size, val_path, image_folder, mask_folder, aug_di
     mask_datagen  = ImageDataGenerator()
     val_image_generator = image_datagen.flow_from_directory(
         val_path+"image",
-        #classes = [image_folder],
         class_mode = None,
         color_mode = image_color_mode,
         target_size = target_size,
@@ -115,7 +109,6 @@ def validationGenerator( batch_size, val_path, image_folder, mask_folder, aug_di
         )
     val_mask_generator = mask_datagen.flow_from_directory(
         val_path+"label",
-        #classes = [mask_folder],
         class_mode = None,
         color_mode = mask_color_mode,
         target_size = target_size,
@@ -136,9 +129,10 @@ def testGenerator(test_path,num_image = num_of_test_img, target_size = img_size,
         img = trans.resize(img,target_size)
         img = np.reshape(img,img.shape+(1,)) if (flag_multi_class) else img
         img = np.reshape(img,(1,)+img.shape)
-        #print("shape of test img:",img)
         yield img
 
+
+### You have to prepare test data by your own after training
 def testGenerator_for_evaluation(test_path, mask_path, num_image=num_of_test_img, num_class=num_classes ,target_size=(256,256), flag_multi_class = True, as_gray = True):
     for i in range(num_image):
         i = i + 1
@@ -147,15 +141,11 @@ def testGenerator_for_evaluation(test_path, mask_path, num_image=num_of_test_img
         img = trans.resize(img, target_size)
         img = np.reshape(img,img.shape+(1,)) if (flag_multi_class) else img
         img = np.reshape(img,(1,)+img.shape)
-        #print("img shape:",img.shape)
         # read mask images
         mask = io.imread(os.path.join(mask_path,"%d.png"%i), as_gray = as_gray)
         mask = trans.resize(mask, target_size)
-        #print("mask shape:",mask.shape)
         mask = np.expand_dims(mask,0)
         mask = np.expand_dims(mask,-1)
-        #print(mask)
-        #print(mask.shape)
         mask = mask[:,:,:,0] if(len(mask.shape) == 4) else mask[:,:,0]
         ###### filter noise points not related to the classes ######
         mask[(mask!=0.)&(mask!=255.)&(mask!=128.)] = 0.
@@ -164,10 +154,11 @@ def testGenerator_for_evaluation(test_path, mask_path, num_image=num_of_test_img
         new_mask[(mask == 128.),   1] = 1
         new_mask[(mask ==   0.),   2] = 1
         mask = new_mask
-               
         yield (img,mask)
 
 
+
+### draw imgs in labelVisualize and save results in saveResult
 def labelVisualize(num_class,  color_dict, img):
     img_out = np.zeros(img[:,:,0].shape + (3,))
     for i in range(img.shape[0]):

@@ -17,10 +17,8 @@ arg = command_arguments()
 learning_rate = arg.learning_rate
 learning_decay_rate = arg.learning_decay_rate
 
-#learning_rate = K.variable(learning_rate)
-
-img_size = (256,256,1)
-dr_rate = 0.6
+img_size = (256,256,1) # 256 * 256 grayscale img with 1 channel
+dr_rate = 0.6 # never mind
 leakyrelu_alpha = 0.3
 
 def unet(pretrained_weights = None,input_size = img_size):
@@ -131,11 +129,9 @@ def unet(pretrained_weights = None,input_size = img_size):
     conv9 = BatchNormalization()(conv9)
     conv9 = LeakyReLU(alpha=leakyrelu_alpha)(conv9)    
     #conv9 = Dropout(dr_rate)(conv9) ###
-    
-    conv10 = Conv2D(3, 1, activation = 'softmax')(conv9)
 
-    model = Model(inputs = inputs, outputs = conv10)
-    
+    conv10 = Conv2D(3, 1, activation = 'softmax')(conv9)
+    model = Model(inputs = inputs, outputs = conv10)   
     model.compile(optimizer = Adam(lr = learning_rate, decay = learning_decay_rate), loss = 'categorical_crossentropy', metrics = ['accuracy'])
     
     #model.summary()
