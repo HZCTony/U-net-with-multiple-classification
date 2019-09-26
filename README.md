@@ -6,7 +6,7 @@ This is a modified project from the two-class(cell and background) [zhixuhao/une
 ### 2019/09/13 update : Quick Start
 
 I simplified my code and now make training much easier.
-Once you want to run training, you can just pass some parameters in command line like below:
+Once you want to run training, you can just pass some parameters in command line like below after you build up your own dev environment:
 ```
 python3 main.py -n 001 -lr 0.00004 -ldr 0.000008 -b 16 -s 60 -e 80
 ```
@@ -18,8 +18,6 @@ python3 main.py -n 001 -lr 0.00004 -ldr 0.000008 -b 16 -s 60 -e 80
 -s   = steps  
 -e   = epochs  
 (check more params in mode/config.py)
-
-After you build up your own dev environment, you can run with the command immediately.
 
 --------------------------------------------------------------------------------
 
