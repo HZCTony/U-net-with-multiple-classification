@@ -2,6 +2,8 @@
 
 This is a modified project from the two-class(cell and background) [zhixuhao/unet](https://github.com/zhixuhao/unet.git) here. The main purpose of this project is establishing a process of multiple classification. Here are 3 classes, dog, cat and background and I open the labelled images. Try it!
 
+![image](pic_modified_catndog.png)
+
 --------------------------------------------------------------------------------
 ### 2019/09/13 update : Quick Start
 
